@@ -11,11 +11,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import UploadSection from "@/components/upload-section";
-import ConfigurationPanel from "@/components/configuration-panel";
-import GenerateSection from "@/components/generate-section";
-import PreviewSection from "@/components/preview-section";
-import ExportSection from "@/components/export-section";
+import UploadSection from "@/components/steps/upload-section";
+import ConfigurationPanel from "@/components/steps/components/configuration-panel";
+import GenerateSection from "@/components/steps/generate-section";
+import PreviewSection from "@/components/steps/preview-section";
+import ExportSection from "@/components/steps/export-section";
 import StepperNavigation from "@/components/stepper-navigation";
 import ThemeProvider from "@/components/theme-provider";
 import { Steps } from "@/lib/types";
