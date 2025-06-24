@@ -9,8 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChevronDown, ChevronRight, File, Folder, FolderOpen, Code2, FileText, Settings, Package } from "lucide-react"
 
 interface DirectoryViewerProps {
-  generatedCode: any
-  components: any[]
+  generatedCode: any;
+  components: any[];
 }
 
 export default function DirectoryViewer({ generatedCode, components }: DirectoryViewerProps) {

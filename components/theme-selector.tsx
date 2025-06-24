@@ -1,50 +1,51 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Palette, Check, Sun, Moon, Monitor } from "lucide-react"
-import { useColorTheme } from "./theme-provider"
-import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
+} from "@/components/ui/dropdown-menu";
+import { Palette, Check, Sun, Moon } from "lucide-react";
+import { useColorTheme } from "./theme-provider";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { Color, ColorTheme } from "@/lib/types";
 
-const colorThemes = [
+const colorThemes: ColorTheme[] = [
   {
-    name: "default",
-    label: "Default",
-    color: "bg-slate-900 dark:bg-slate-100",
-  },
-  {
-    name: "blue",
-    label: "Ocean Blue",
+    name: Color.BLUE,
+    label: "Blue",
     color: "bg-blue-600",
   },
   {
-    name: "green",
-    label: "Forest Green",
+    name: Color.BLACK,
+    label: "Black",
+    color: "bg-slate-900 dark:bg-slate-100",
+  },
+  {
+    name: Color.GREEN,
+    label: "Green",
     color: "bg-green-600",
   },
   {
-    name: "purple",
-    label: "Royal Purple",
+    name: Color.PURPLE,
+    label: "Purple",
     color: "bg-purple-600",
   },
   {
-    name: "orange",
-    label: "Sunset Orange",
+    name: Color.ORANGE,
+    label: "Orange",
     color: "bg-orange-600",
   },
   {
-    name: "red",
-    label: "Cherry Red",
+    name: Color.RED,
+    label: "Red",
     color: "bg-red-600",
   },
-]
+];
 
 const darkModeOptions = [
   {
@@ -57,21 +58,16 @@ const darkModeOptions = [
     label: "Dark",
     icon: Moon,
   },
-  {
-    value: "system",
-    label: "System",
-    icon: Monitor,
-  },
-]
+];
 
 export default function ThemeSelector() {
-  const { colorTheme, setColorTheme } = useColorTheme()
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const { colorTheme, setColorTheme } = useColorTheme();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
     return (
@@ -79,11 +75,13 @@ export default function ThemeSelector() {
         <Palette className="h-4 w-4" />
         <div className="w-3 h-3 rounded-full bg-slate-900" />
       </Button>
-    )
+    );
   }
 
-  const currentColorTheme = colorThemes.find((t) => t.name === colorTheme)
-  const currentDarkModeOption = darkModeOptions.find((option) => option.value === theme)
+  const currentColorTheme = colorThemes.find((t) => t.name === colorTheme);
+  const currentDarkModeOption = darkModeOptions.find(
+    (option) => option.value === theme
+  );
 
   return (
     <DropdownMenu>
@@ -91,7 +89,9 @@ export default function ThemeSelector() {
         <Button variant="outline" size="sm" className="gap-2">
           <Palette className="h-4 w-4" />
           <div className={`w-3 h-3 rounded-full ${currentColorTheme?.color}`} />
-          {currentDarkModeOption && <currentDarkModeOption.icon className="h-3 w-3" />}
+          {currentDarkModeOption && (
+            <currentDarkModeOption.icon className="h-3 w-3" />
+          )}
           <span className="hidden sm:inline">{currentColorTheme?.label}</span>
         </Button>
       </DropdownMenuTrigger>
@@ -117,7 +117,7 @@ export default function ThemeSelector() {
         {colorThemes.map((themeOption) => (
           <DropdownMenuItem
             key={themeOption.name}
-            onClick={() => setColorTheme(themeOption.name as any)}
+            onClick={() => setColorTheme(themeOption.name)}
             className="flex items-center justify-between cursor-pointer"
           >
             <div className="flex items-center gap-2">
@@ -129,5 +129,5 @@ export default function ThemeSelector() {
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

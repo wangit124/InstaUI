@@ -1,58 +1,65 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Code2, ArrowLeft, ArrowRight } from "lucide-react"
-import UploadSection from "@/components/upload-section"
-import ConfigurationPanel from "@/components/configuration-panel"
-import GenerateSection from "@/components/generate-section"
-import PreviewSection from "@/components/preview-section"
-import DirectoryViewer from "@/components/directory-viewer"
-import StepperNavigation from "@/components/stepper-navigation"
-import ThemeProvider from "@/components/theme-provider"
-import ThemeSelector from "@/components/theme-selector"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import UploadSection from "@/components/upload-section";
+import ConfigurationPanel from "@/components/configuration-panel";
+import GenerateSection from "@/components/generate-section";
+import PreviewSection from "@/components/preview-section";
+import ExportSection from "@/components/export-section";
+import StepperNavigation from "@/components/stepper-navigation";
+import ThemeProvider from "@/components/theme-provider";
+import { Steps } from "@/lib/types";
+import Header from "@/components/header";
 
 const steps = [
   {
-    id: "upload",
+    id: Steps.UPLOAD,
     title: "Upload",
     description: "Import designs",
     component: "upload",
   },
   {
-    id: "config",
+    id: Steps.CONFIG,
     title: "Configure",
     description: "Setup preferences",
     component: "config",
   },
   {
-    id: "generate",
+    id: Steps.GENERATE,
     title: "Generate",
     description: "Create code & components",
     component: "generate",
   },
   {
-    id: "preview",
+    id: Steps.PREVIEW,
     title: "Preview",
     description: "Review results",
     component: "preview",
   },
   {
-    id: "directory",
+    id: Steps.EXPORT,
     title: "Export",
     description: "Download & deploy",
-    component: "directory",
+    component: "export",
   },
-]
+];
 
-export default function Home() {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [completedSteps, setCompletedSteps] = useState<number[]>([])
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-  const [figmaLinks, setFigmaLinks] = useState<string[]>([])
-  const [extractedComponents, setExtractedComponents] = useState<any[]>([])
+export default function App() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [figmaLinks, setFigmaLinks] = useState<string[]>([]);
+  const [extractedComponents, setExtractedComponents] = useState<any[]>([]);
   const [configuration, setConfiguration] = useState({
     styling: {
       componentSplitting: "moderate",
@@ -63,65 +70,66 @@ export default function Home() {
       stateManagement: ["zustand"],
       forms: ["react-hook-form"],
     },
-  })
-  const [generatedCode, setGeneratedCode] = useState<any>(null)
+  });
+  const [generatedCode, setGeneratedCode] = useState<any>(null);
 
   const handleStepComplete = (stepIndex: number) => {
     if (!completedSteps.includes(stepIndex)) {
-      setCompletedSteps([...completedSteps, stepIndex])
+      setCompletedSteps([...completedSteps, stepIndex]);
     }
-  }
+  };
 
   const handleNextStep = () => {
     if (currentStep < steps.length - 1) {
-      handleStepComplete(currentStep)
-      setCurrentStep(currentStep + 1)
+      handleStepComplete(currentStep);
+      setCurrentStep(currentStep + 1);
     }
-  }
+  };
 
   const handlePrevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(currentStep - 1);
     }
-  }
+  };
 
   const handleStepClick = (stepIndex: number) => {
-    setCurrentStep(stepIndex)
-  }
+    setCurrentStep(stepIndex);
+  };
 
   const canProceedToNext = () => {
     switch (currentStep) {
       case 0: // Upload
-        return uploadedFiles.length > 0 || figmaLinks.length > 0
+        return uploadedFiles.length > 0 || figmaLinks.length > 0;
       case 1: // Config
-        return true // Always can proceed from config
+        return true; // Always can proceed from config
       case 2: // Generate
-        return generatedCode !== null
+        return generatedCode !== null;
       case 3: // Preview
-        return true // Always can proceed from preview
+        return true; // Always can proceed from preview
       default:
-        return true
+        return true;
     }
-  }
+  };
 
   const renderStepContent = () => {
     switch (steps[currentStep].component) {
-      case "upload":
+      case Steps.UPLOAD:
         return (
           <UploadSection
             uploadedFiles={uploadedFiles}
             setUploadedFiles={setUploadedFiles}
             figmaLinks={figmaLinks}
             setFigmaLinks={setFigmaLinks}
-            onExtractComponents={(components) => {
-              setExtractedComponents(components)
-              handleStepComplete(0)
-            }}
           />
-        )
-      case "config":
-        return <ConfigurationPanel configuration={configuration} onConfigurationChange={setConfiguration} />
-      case "generate":
+        );
+      case Steps.CONFIG:
+        return (
+          <ConfigurationPanel
+            configuration={configuration}
+            onConfigurationChange={setConfiguration}
+          />
+        );
+      case Steps.GENERATE:
         return (
           <GenerateSection
             uploadedFiles={uploadedFiles}
@@ -130,47 +138,36 @@ export default function Home() {
             setExtractedComponents={setExtractedComponents}
             configuration={configuration}
             onCodeGenerated={(code) => {
-              setGeneratedCode(code)
-              handleStepComplete(2)
+              setGeneratedCode(code);
+              handleStepComplete(2);
             }}
           />
-        )
-      case "preview":
+        );
+      case Steps.PREVIEW:
         return (
           <PreviewSection
             originalDesigns={uploadedFiles}
             generatedCode={generatedCode}
             components={extractedComponents}
           />
-        )
-      case "directory":
-        return <DirectoryViewer generatedCode={generatedCode} components={extractedComponents} />
+        );
+      case Steps.EXPORT:
+        return (
+          <ExportSection
+            generatedCode={generatedCode}
+            components={extractedComponents}
+          />
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-          <div className="container flex h-16 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Code2 className="h-4 w-4 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold">DesignGen</h1>
-                <p className="text-xs text-muted-foreground">Design to Code Generator</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <ThemeSelector />
-              <Badge variant="secondary">Beta</Badge>
-            </div>
-          </div>
-        </header>
+        <Header />
 
         {/* Stepper Navigation */}
         <div className="border-b bg-background/50">
@@ -196,7 +193,9 @@ export default function Home() {
                       Step {currentStep + 1} of {steps.length}
                     </Badge>
                   </CardTitle>
-                  <CardDescription>{steps[currentStep].description}</CardDescription>
+                  <CardDescription>
+                    {steps[currentStep].description}
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -205,7 +204,11 @@ export default function Home() {
 
               {/* Navigation Buttons */}
               <div className="flex items-center justify-between pt-6 border-t">
-                <Button variant="outline" onClick={handlePrevStep} disabled={currentStep === 0}>
+                <Button
+                  variant="outline"
+                  onClick={handlePrevStep}
+                  disabled={currentStep === 0}
+                >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Previous
                 </Button>
@@ -214,7 +217,12 @@ export default function Home() {
                   {currentStep + 1} of {steps.length} steps
                 </div>
 
-                <Button onClick={handleNextStep} disabled={currentStep === steps.length - 1 || !canProceedToNext()}>
+                <Button
+                  onClick={handleNextStep}
+                  disabled={
+                    currentStep === steps.length - 1 || !canProceedToNext()
+                  }
+                >
                   Next
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
@@ -224,5 +232,5 @@ export default function Home() {
         </div>
       </div>
     </ThemeProvider>
-  )
+  );
 }
