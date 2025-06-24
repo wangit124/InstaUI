@@ -173,14 +173,14 @@ export default function StepWrapper() {
               Previous
             </Button>
 
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between gap-2">
               <div className="text-sm font-medium">
                 Step {currentStepIndex + 1} of {steps.length}
               </div>
               <div className="flex items-center gap-1">
-                {steps.map((_, index) => (
+                {steps.map((step, index) => (
                   <div
-                    key={index}
+                    key={step.id}
                     className={cn(
                       "h-2 w-8 rounded-full transition-colors",
                       index <= currentStepIndex

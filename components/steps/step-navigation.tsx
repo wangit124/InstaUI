@@ -43,7 +43,7 @@ export default function StepNavigation() {
   const getStepClasses = (step: StepType) => {
     const status = getStepStatus(step);
     const baseClasses =
-      "flex items-center w-full gap-3 p-3 rounded-lg transition-all duration-200";
+      "flex items-center w-full gap-3 p-3 rounded-lg transition-all duration-200 border border-primary/20";
     switch (status) {
       case StepStatus.COMPLETED:
         return cn(
@@ -54,7 +54,7 @@ export default function StepNavigation() {
       case StepStatus.ACTIVE:
         return cn(
           baseClasses,
-          "bg-primary/10 text-primary border border-primary/20 shadow-sm",
+          "bg-primary/10 text-primary shadow-sm",
           "dark:bg-primary/20 dark:border-primary/30"
         );
       case StepStatus.AVAILABLE:
@@ -66,7 +66,7 @@ export default function StepNavigation() {
       case StepStatus.LOCKED:
         return cn(
           baseClasses,
-          "bg-muted/20 text-muted-foreground/50 cursor-not-allowed border border-primary/20",
+          "bg-muted/20 text-muted-foreground/50 cursor-not-allowed",
           "dark:bg-muted/10 dark:text-muted-foreground/40"
         );
       default:
