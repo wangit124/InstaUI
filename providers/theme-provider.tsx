@@ -49,7 +49,7 @@ export default function ThemeProvider({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const root = window.document.getElementById("theme-root");
+      const root = window.document.getElementsByTagName("html")?.[0];
 
       // Remove all color theme classes
       root?.classList.remove(
