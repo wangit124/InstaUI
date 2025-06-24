@@ -1,15 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +23,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Play,
   CheckCircle,
@@ -34,15 +46,15 @@ import {
   Filter,
   Upload,
   Link,
-} from "lucide-react"
+} from "lucide-react";
 
 interface GenerateSectionProps {
-  uploadedFiles: File[]
-  figmaLinks: string[]
-  extractedComponents: any[]
-  setExtractedComponents: (components: any[]) => void
-  configuration: any
-  onCodeGenerated: (code: any) => void
+  uploadedFiles: File[];
+  figmaLinks: string[];
+  extractedComponents: any[];
+  setExtractedComponents: (components: any[]) => void;
+  configuration: any;
+  onCodeGenerated: (code: any) => void;
 }
 
 export default function GenerateSection({
@@ -53,21 +65,21 @@ export default function GenerateSection({
   configuration,
   onCodeGenerated,
 }: GenerateSectionProps) {
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [generationProgress, setGenerationProgress] = useState(0)
-  const [generationStep, setGenerationStep] = useState("")
-  const [generationComplete, setGenerationComplete] = useState(false)
-  const [generatedFiles, setGeneratedFiles] = useState<any[]>([])
-  const [isExtracting, setIsExtracting] = useState(false)
-  const [extractionProgress, setExtractionProgress] = useState(0)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterType, setFilterType] = useState("all")
-  const [selectedComponent, setSelectedComponent] = useState<any | null>(null)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState(0);
+  const [generationStep, setGenerationStep] = useState("");
+  const [generationComplete, setGenerationComplete] = useState(false);
+  const [generatedFiles, setGeneratedFiles] = useState<any[]>([]);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [extractionProgress, setExtractionProgress] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const extractComponents = async () => {
-    setIsExtracting(true)
-    setExtractionProgress(0)
+    setIsExtracting(true);
+    setExtractionProgress(0);
 
     // Simulate component extraction process
     const steps = [
@@ -76,11 +88,11 @@ export default function GenerateSection({
       "Extracting components...",
       "Generating component metadata...",
       "Finalizing component library...",
-    ]
+    ];
 
     for (let i = 0; i < steps.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setExtractionProgress((i + 1) * 20)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setExtractionProgress((i + 1) * 20);
     }
 
     // Mock extracted components
@@ -117,17 +129,17 @@ export default function GenerateSection({
         props: ["onSubmit", "initialValues"],
         variants: ["default", "compact"],
       },
-    ]
+    ];
 
-    setExtractedComponents(mockComponents)
-    setIsExtracting(false)
-    setExtractionProgress(100)
-  }
+    setExtractedComponents(mockComponents);
+    setIsExtracting(false);
+    setExtractionProgress(100);
+  };
 
   const generateCode = async () => {
-    setIsGenerating(true)
-    setGenerationProgress(0)
-    setGenerationComplete(false)
+    setIsGenerating(true);
+    setGenerationProgress(0);
+    setGenerationComplete(false);
 
     const steps = [
       { step: "Initializing MCP server connection...", progress: 10 },
@@ -137,12 +149,12 @@ export default function GenerateSection({
       { step: "Applying styling and configuration...", progress: 80 },
       { step: "Optimizing and finalizing code...", progress: 95 },
       { step: "Generation complete!", progress: 100 },
-    ]
+    ];
 
     for (const { step, progress } of steps) {
-      setGenerationStep(step)
-      setGenerationProgress(progress)
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      setGenerationStep(step);
+      setGenerationProgress(progress);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
     }
 
     // Mock generated code structure
@@ -239,48 +251,52 @@ export function NavigationHeader({ logo, menuItems, user }: NavigationHeaderProp
         "components/ui/": ["button.tsx", "card.tsx", "input.tsx"],
         "lib/": ["utils.ts"],
       },
-    }
+    };
 
-    setGeneratedFiles(mockGeneratedCode.files)
-    onCodeGenerated(mockGeneratedCode)
-    setGenerationComplete(true)
-    setIsGenerating(false)
-  }
+    setGeneratedFiles(mockGeneratedCode.files);
+    onCodeGenerated(mockGeneratedCode);
+    setGenerationComplete(true);
+    setIsGenerating(false);
+  };
 
   const downloadCode = () => {
     // Mock download functionality
     const blob = new Blob([JSON.stringify(generatedFiles, null, 2)], {
       type: "application/json",
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "generated-code.json"
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "generated-code.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const filteredComponents = extractedComponents.filter((component) => {
     const matchesSearch =
       component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      component.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filterType === "all" || component.type.toLowerCase() === filterType.toLowerCase()
-    return matchesSearch && matchesFilter
-  })
+      component.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter =
+      filterType === "all" ||
+      component.type.toLowerCase() === filterType.toLowerCase();
+    return matchesSearch && matchesFilter;
+  });
 
-  const componentTypes = [...new Set(extractedComponents.map((c) => c.type))]
+  const componentTypes = [...new Set(extractedComponents.map((c) => c.type))];
 
   const handleEditComponent = (component: any) => {
-    setSelectedComponent(component)
-    setIsEditDialogOpen(true)
-  }
+    setSelectedComponent(component);
+    setIsEditDialogOpen(true);
+  };
 
   const handleDeleteComponent = (componentId: string) => {
-    const updatedComponents = extractedComponents.filter((c) => c.id !== componentId)
-    setExtractedComponents(updatedComponents)
-  }
+    const updatedComponents = extractedComponents.filter(
+      (c) => c.id !== componentId
+    );
+    setExtractedComponents(updatedComponents);
+  };
 
   const generateComponentCode = (component: any) => {
     return `import React from 'react'
@@ -301,8 +317,8 @@ export function ${component.name.replace(/\s+/g, "")}({
       {/* Component implementation */}
     </div>
   )
-}`
-  }
+}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -315,7 +331,8 @@ export function ${component.name.replace(/\s+/g, "")}({
               Extract Components
             </CardTitle>
             <CardDescription>
-              First, extract reusable components from your uploaded designs and Figma links
+              First, extract reusable components from your uploaded designs and
+              Figma links
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -324,12 +341,19 @@ export function ${component.name.replace(/\s+/g, "")}({
                 <h4 className="font-medium mb-2">Uploaded Files</h4>
                 <div className="space-y-1">
                   {uploadedFiles.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No files uploaded</p>
+                    <p className="text-sm text-muted-foreground">
+                      No files uploaded
+                    </p>
                   ) : (
                     uploadedFiles.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between text-sm"
+                      >
                         <span>{file.name}</span>
-                        <Badge variant="outline">{(file.size / 1024 / 1024).toFixed(2)} MB</Badge>
+                        <Badge variant="outline">
+                          {(file.size / 1024 / 1024).toFixed(2)} MB
+                        </Badge>
                       </div>
                     ))
                   )}
@@ -339,10 +363,15 @@ export function ${component.name.replace(/\s+/g, "")}({
                 <h4 className="font-medium mb-2">Figma Links</h4>
                 <div className="space-y-1">
                   {figmaLinks.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No Figma links added</p>
+                    <p className="text-sm text-muted-foreground">
+                      No Figma links added
+                    </p>
                   ) : (
                     figmaLinks.map((link, index) => (
-                      <div key={index} className="flex items-center gap-2 text-sm">
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 text-sm"
+                      >
                         <Link className="h-3 w-3" />
                         <span className="truncate">{link}</span>
                       </div>
@@ -355,11 +384,16 @@ export function ${component.name.replace(/\s+/g, "")}({
             <div className="flex items-center justify-between pt-4 border-t">
               <div>
                 <p className="font-medium">Ready to Extract Components</p>
-                <p className="text-sm text-muted-foreground">Analyze your designs to identify reusable UI components</p>
+                <p className="text-sm text-muted-foreground">
+                  Analyze your designs to identify reusable UI components
+                </p>
               </div>
               <Button
                 onClick={extractComponents}
-                disabled={(uploadedFiles.length === 0 && figmaLinks.length === 0) || isExtracting}
+                disabled={
+                  (uploadedFiles.length === 0 && figmaLinks.length === 0) ||
+                  isExtracting
+                }
                 size="lg"
               >
                 {isExtracting ? (
@@ -397,7 +431,9 @@ export function ${component.name.replace(/\s+/g, "")}({
               <Code2 className="h-5 w-5" />
               Component Library
             </CardTitle>
-            <CardDescription>Review and manage your extracted components before generating code</CardDescription>
+            <CardDescription>
+              Review and manage your extracted components before generating code
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Search and Filter */}
@@ -438,11 +474,16 @@ export function ${component.name.replace(/\s+/g, "")}({
             {/* Components Grid */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredComponents.map((component) => (
-                <Card key={component.id} className="group hover:shadow-md transition-shadow">
+                <Card
+                  key={component.id}
+                  className="group hover:shadow-md transition-shadow"
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div>
-                        <CardTitle className="text-lg">{component.name}</CardTitle>
+                        <CardTitle className="text-lg">
+                          {component.name}
+                        </CardTitle>
                         <Badge variant="secondary" className="mt-1">
                           {component.type}
                         </Badge>
@@ -457,11 +498,15 @@ export function ${component.name.replace(/\s+/g, "")}({
                           <DialogContent className="max-w-4xl">
                             <DialogHeader>
                               <DialogTitle>{component.name}</DialogTitle>
-                              <DialogDescription>{component.description}</DialogDescription>
+                              <DialogDescription>
+                                {component.description}
+                              </DialogDescription>
                             </DialogHeader>
                             <Tabs defaultValue="preview" className="w-full">
                               <TabsList>
-                                <TabsTrigger value="preview">Preview</TabsTrigger>
+                                <TabsTrigger value="preview">
+                                  Preview
+                                </TabsTrigger>
                                 <TabsTrigger value="code">Code</TabsTrigger>
                                 <TabsTrigger value="props">Props</TabsTrigger>
                               </TabsList>
@@ -474,13 +519,17 @@ export function ${component.name.replace(/\s+/g, "")}({
                               </TabsContent>
                               <TabsContent value="code" className="mt-4">
                                 <pre className="bg-muted p-4 rounded-lg text-sm overflow-x-auto">
-                                  <code>{generateComponentCode(component)}</code>
+                                  <code>
+                                    {generateComponentCode(component)}
+                                  </code>
                                 </pre>
                               </TabsContent>
                               <TabsContent value="props" className="mt-4">
                                 <div className="space-y-4">
                                   <div>
-                                    <Label className="text-base font-medium">Props</Label>
+                                    <Label className="text-base font-medium">
+                                      Props
+                                    </Label>
                                     <div className="mt-2 space-y-2">
                                       {component.props.map((prop: string) => (
                                         <Badge key={prop} variant="outline">
@@ -490,13 +539,20 @@ export function ${component.name.replace(/\s+/g, "")}({
                                     </div>
                                   </div>
                                   <div>
-                                    <Label className="text-base font-medium">Variants</Label>
+                                    <Label className="text-base font-medium">
+                                      Variants
+                                    </Label>
                                     <div className="mt-2 space-y-2">
-                                      {component.variants.map((variant: string) => (
-                                        <Badge key={variant} variant="secondary">
-                                          {variant}
-                                        </Badge>
-                                      ))}
+                                      {component.variants.map(
+                                        (variant: string) => (
+                                          <Badge
+                                            key={variant}
+                                            variant="secondary"
+                                          >
+                                            {variant}
+                                          </Badge>
+                                        )
+                                      )}
                                     </div>
                                   </div>
                                 </div>
@@ -504,23 +560,39 @@ export function ${component.name.replace(/\s+/g, "")}({
                             </Tabs>
                           </DialogContent>
                         </Dialog>
-                        <Button variant="ghost" size="sm" onClick={() => handleEditComponent(component)}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditComponent(component)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => handleDeleteComponent(component.id)}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteComponent(component.id)}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="mb-3">{component.description}</CardDescription>
+                    <CardDescription className="mb-3">
+                      {component.description}
+                    </CardDescription>
                     <div className="space-y-2">
                       <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Props</Label>
+                        <Label className="text-xs font-medium text-muted-foreground">
+                          Props
+                        </Label>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {component.props.slice(0, 3).map((prop: string) => (
-                            <Badge key={prop} variant="outline" className="text-xs">
+                            <Badge
+                              key={prop}
+                              variant="outline"
+                              className="text-xs"
+                            >
                               {prop}
                             </Badge>
                           ))}
@@ -532,10 +604,16 @@ export function ${component.name.replace(/\s+/g, "")}({
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Variants</Label>
+                        <Label className="text-xs font-medium text-muted-foreground">
+                          Variants
+                        </Label>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {component.variants.map((variant: string) => (
-                            <Badge key={variant} variant="secondary" className="text-xs">
+                            <Badge
+                              key={variant}
+                              variant="secondary"
+                              className="text-xs"
+                            >
                               {variant}
                             </Badge>
                           ))}
@@ -555,7 +633,9 @@ export function ${component.name.replace(/\s+/g, "")}({
         <Card>
           <CardHeader>
             <CardTitle>Code Generation</CardTitle>
-            <CardDescription>Generate your Next.js application with the configured settings</CardDescription>
+            <CardDescription>
+              Generate your Next.js application with the configured settings
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {!isGenerating && !generationComplete && (
@@ -563,7 +643,8 @@ export function ${component.name.replace(/\s+/g, "")}({
                 <div>
                   <p className="font-medium">Ready to Generate</p>
                   <p className="text-sm text-muted-foreground">
-                    This will create a complete Next.js application with your components
+                    This will create a complete Next.js application with your
+                    components
                   </p>
                 </div>
                 <Button onClick={generateCode} size="lg">
@@ -594,7 +675,8 @@ export function ${component.name.replace(/\s+/g, "")}({
                 <Alert>
                   <CheckCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Code generation completed successfully! {generatedFiles.length} files generated.
+                    Code generation completed successfully!{" "}
+                    {generatedFiles.length} files generated.
                   </AlertDescription>
                 </Alert>
 
@@ -627,7 +709,9 @@ export function ${component.name.replace(/\s+/g, "")}({
         <Card>
           <CardHeader>
             <CardTitle>Generated Files</CardTitle>
-            <CardDescription>Preview of the generated application structure</CardDescription>
+            <CardDescription>
+              Preview of the generated application structure
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -638,7 +722,13 @@ export function ${component.name.replace(/\s+/g, "")}({
                       <Code2 className="h-4 w-4" />
                       <span className="font-mono text-sm">{file.path}</span>
                     </div>
-                    <Badge variant={file.type === "component" ? "default" : "secondary"}>{file.type}</Badge>
+                    <Badge
+                      variant={
+                        file.type === "component" ? "default" : "secondary"
+                      }
+                    >
+                      {file.type}
+                    </Badge>
                   </div>
                   <pre className="text-xs bg-muted p-2 rounded overflow-x-auto max-h-32">
                     <code>{file.content.substring(0, 200)}...</code>
@@ -651,21 +741,26 @@ export function ${component.name.replace(/\s+/g, "")}({
       )}
 
       {/* Validation Warnings */}
-      {extractedComponents.length === 0 && uploadedFiles.length === 0 && figmaLinks.length === 0 && (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            No designs have been uploaded yet. Please go back to the Upload step to add design files or Figma links.
-          </AlertDescription>
-        </Alert>
-      )}
+      {extractedComponents.length === 0 &&
+        uploadedFiles.length === 0 &&
+        figmaLinks.length === 0 && (
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              No designs have been uploaded yet. Please go back to the Upload
+              step to add design files or Figma links.
+            </AlertDescription>
+          </Alert>
+        )}
 
       {/* Edit Component Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Component</DialogTitle>
-            <DialogDescription>Modify component properties and configuration</DialogDescription>
+            <DialogDescription>
+              Modify component properties and configuration
+            </DialogDescription>
           </DialogHeader>
           {selectedComponent && (
             <div className="space-y-4">
@@ -675,7 +770,10 @@ export function ${component.name.replace(/\s+/g, "")}({
               </div>
               <div>
                 <Label htmlFor="description">Description</Label>
-                <Textarea id="description" defaultValue={selectedComponent.description} />
+                <Textarea
+                  id="description"
+                  defaultValue={selectedComponent.description}
+                />
               </div>
               <div>
                 <Label htmlFor="type">Type</Label>
@@ -693,15 +791,20 @@ export function ${component.name.replace(/\s+/g, "")}({
                 </Select>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
                   Cancel
                 </Button>
-                <Button onClick={() => setIsEditDialogOpen(false)}>Save Changes</Button>
+                <Button onClick={() => setIsEditDialogOpen(false)}>
+                  Save Changes
+                </Button>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

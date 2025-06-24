@@ -1,44 +1,69 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChevronDown, ChevronRight, File, Folder, FolderOpen, Code2, FileText, Settings, Package } from "lucide-react"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  ChevronDown,
+  ChevronRight,
+  File,
+  Folder,
+  FolderOpen,
+  Code2,
+  FileText,
+  Settings,
+  Package,
+} from "lucide-react";
 
 interface DirectoryViewerProps {
   generatedCode: any;
   components: any[];
 }
 
-export default function DirectoryViewer({ generatedCode, components }: DirectoryViewerProps) {
-  const [selectedFile, setSelectedFile] = useState<string | null>(null)
-  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(["app", "components"]))
+export default function DirectoryViewer({
+  generatedCode,
+  components,
+}: DirectoryViewerProps) {
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
+    new Set(["app", "components"])
+  );
 
   const toggleFolder = (folderPath: string) => {
-    const newExpanded = new Set(expandedFolders)
+    const newExpanded = new Set(expandedFolders);
     if (newExpanded.has(folderPath)) {
-      newExpanded.delete(folderPath)
+      newExpanded.delete(folderPath);
     } else {
-      newExpanded.add(folderPath)
+      newExpanded.add(folderPath);
     }
-    setExpandedFolders(newExpanded)
-  }
+    setExpandedFolders(newExpanded);
+  };
 
   const getFileIcon = (fileName: string) => {
     if (fileName.endsWith(".tsx") || fileName.endsWith(".ts")) {
-      return <Code2 className="h-4 w-4 text-blue-500" />
+      return <Code2 className="h-4 w-4 text-blue-500" />;
     }
     if (fileName.endsWith(".css")) {
-      return <FileText className="h-4 w-4 text-green-500" />
+      return <FileText className="h-4 w-4 text-green-500" />;
     }
     if (fileName.endsWith(".json")) {
-      return <Settings className="h-4 w-4 text-yellow-500" />
+      return <Settings className="h-4 w-4 text-yellow-500" />;
     }
-    return <File className="h-4 w-4 text-muted-foreground" />
-  }
+    return <File className="h-4 w-4 text-muted-foreground" />;
+  };
 
   const mockDirectoryStructure = {
     "app/": {
@@ -46,7 +71,9 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
       children: {
         "page.tsx": {
           type: "file",
-          content: generatedCode?.files?.find((f: any) => f.path === "app/page.tsx")?.content,
+          content: generatedCode?.files?.find(
+            (f: any) => f.path === "app/page.tsx"
+          )?.content,
         },
         "layout.tsx": { type: "file", content: "// Layout component" },
         "globals.css": { type: "file", content: "/* Global styles */" },
@@ -57,11 +84,15 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
       children: {
         "product-card.tsx": {
           type: "file",
-          content: generatedCode?.files?.find((f: any) => f.path === "components/product-card.tsx")?.content,
+          content: generatedCode?.files?.find(
+            (f: any) => f.path === "components/product-card.tsx"
+          )?.content,
         },
         "navigation-header.tsx": {
           type: "file",
-          content: generatedCode?.files?.find((f: any) => f.path === "components/navigation-header.tsx")?.content,
+          content: generatedCode?.files?.find(
+            (f: any) => f.path === "components/navigation-header.tsx"
+          )?.content,
         },
         "ui/": {
           type: "folder",
@@ -80,23 +111,36 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
       },
     },
     "package.json": { type: "file", content: "// Package configuration" },
-    "tailwind.config.js": { type: "file", content: "// Tailwind configuration" },
+    "tailwind.config.js": {
+      type: "file",
+      content: "// Tailwind configuration",
+    },
     "next.config.js": { type: "file", content: "// Next.js configuration" },
-  }
+  };
 
   const renderDirectoryTree = (structure: any, basePath = "") => {
     return Object.entries(structure).map(([name, item]: [string, any]) => {
-      const fullPath = basePath ? `${basePath}/${name}` : name
-      const isFolder = item.type === "folder"
-      const isExpanded = expandedFolders.has(fullPath)
+      const fullPath = basePath ? `${basePath}/${name}` : name;
+      const isFolder = item.type === "folder";
+      const isExpanded = expandedFolders.has(fullPath);
 
       if (isFolder) {
         return (
           <div key={fullPath}>
-            <Collapsible open={isExpanded} onOpenChange={() => toggleFolder(fullPath)}>
+            <Collapsible
+              open={isExpanded}
+              onOpenChange={() => toggleFolder(fullPath)}
+            >
               <CollapsibleTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start h-8 px-2 font-normal">
-                  {isExpanded ? <ChevronDown className="h-4 w-4 mr-1" /> : <ChevronRight className="h-4 w-4 mr-1" />}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-8 px-2 font-normal"
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="h-4 w-4 mr-1" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 mr-1" />
+                  )}
                   {isExpanded ? (
                     <FolderOpen className="h-4 w-4 mr-2 text-blue-500" />
                   ) : (
@@ -105,10 +149,12 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
                   {name}
                 </Button>
               </CollapsibleTrigger>
-              <CollapsibleContent className="ml-4">{renderDirectoryTree(item.children, fullPath)}</CollapsibleContent>
+              <CollapsibleContent className="ml-4">
+                {renderDirectoryTree(item.children, fullPath)}
+              </CollapsibleContent>
             </Collapsible>
           </div>
-        )
+        );
       } else {
         return (
           <Button
@@ -120,36 +166,38 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
             {getFileIcon(name)}
             <span className="ml-2">{name}</span>
           </Button>
-        )
+        );
       }
-    })
-  }
+    });
+  };
 
   const getSelectedFileContent = () => {
-    if (!selectedFile) return null
+    if (!selectedFile) return null;
 
-    const pathParts = selectedFile.split("/")
-    let current = mockDirectoryStructure
+    const pathParts = selectedFile.split("/");
+    let current = mockDirectoryStructure;
 
     for (const part of pathParts) {
       if (current[part]) {
         if (current[part].type === "file") {
-          return current[part].content
+          return current[part].content;
         } else {
-          current = current[part].children
+          current = current[part].children;
         }
       }
     }
-    return null
-  }
+    return null;
+  };
 
   const getComponentDocumentation = (fileName: string) => {
-    const componentName = fileName.replace(".tsx", "").replace(".ts", "")
+    const componentName = fileName.replace(".tsx", "").replace(".ts", "");
     const component = components.find(
-      (c) => c.name.toLowerCase().replace(/\s+/g, "-") === componentName || c.id === componentName,
-    )
+      (c) =>
+        c.name.toLowerCase().replace(/\s+/g, "-") === componentName ||
+        c.id === componentName
+    );
 
-    if (!component) return null
+    if (!component) return null;
 
     return {
       name: component.name,
@@ -157,8 +205,8 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
       type: component.type,
       props: component.props,
       variants: component.variants,
-    }
-  }
+    };
+  };
 
   return (
     <div className="space-y-6">
@@ -178,19 +226,27 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle className="text-base">Project Structure</CardTitle>
-              <CardDescription>Navigate through your generated files</CardDescription>
+              <CardDescription>
+                Navigate through your generated files
+              </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="max-h-96 overflow-y-auto">{renderDirectoryTree(mockDirectoryStructure)}</div>
+              <div className="max-h-96 overflow-y-auto">
+                {renderDirectoryTree(mockDirectoryStructure)}
+              </div>
             </CardContent>
           </Card>
 
           {/* File Content & Documentation */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle className="text-base">{selectedFile ? selectedFile : "Select a file"}</CardTitle>
+              <CardTitle className="text-base">
+                {selectedFile ? selectedFile : "Select a file"}
+              </CardTitle>
               <CardDescription>
-                {selectedFile ? "File content and documentation" : "Choose a file from the directory tree"}
+                {selectedFile
+                  ? "File content and documentation"
+                  : "Choose a file from the directory tree"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -198,7 +254,9 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
                 <Tabs defaultValue="content" className="w-full">
                   <TabsList>
                     <TabsTrigger value="content">Content</TabsTrigger>
-                    {selectedFile.endsWith(".tsx") && <TabsTrigger value="docs">Documentation</TabsTrigger>}
+                    {selectedFile.endsWith(".tsx") && (
+                      <TabsTrigger value="docs">Documentation</TabsTrigger>
+                    )}
                   </TabsList>
 
                   <TabsContent value="content" className="mt-4">
@@ -206,11 +264,16 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
                       <div className="bg-muted px-3 py-2 border-b">
                         <div className="flex items-center gap-2">
                           {getFileIcon(selectedFile.split("/").pop() || "")}
-                          <span className="font-mono text-sm">{selectedFile}</span>
+                          <span className="font-mono text-sm">
+                            {selectedFile}
+                          </span>
                         </div>
                       </div>
                       <pre className="p-4 text-sm overflow-x-auto max-h-96">
-                        <code>{getSelectedFileContent() || "// File content not available"}</code>
+                        <code>
+                          {getSelectedFileContent() ||
+                            "// File content not available"}
+                        </code>
                       </pre>
                     </div>
                   </TabsContent>
@@ -218,14 +281,18 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
                   {selectedFile.endsWith(".tsx") && (
                     <TabsContent value="docs" className="mt-4">
                       {(() => {
-                        const fileName = selectedFile.split("/").pop() || ""
-                        const docs = getComponentDocumentation(fileName)
+                        const fileName = selectedFile.split("/").pop() || "";
+                        const docs = getComponentDocumentation(fileName);
 
                         return docs ? (
                           <div className="space-y-6">
                             <div>
-                              <h3 className="text-lg font-medium mb-2">{docs.name}</h3>
-                              <p className="text-muted-foreground mb-4">{docs.description}</p>
+                              <h3 className="text-lg font-medium mb-2">
+                                {docs.name}
+                              </h3>
+                              <p className="text-muted-foreground mb-4">
+                                {docs.description}
+                              </p>
                               <Badge>{docs.type}</Badge>
                             </div>
 
@@ -233,7 +300,10 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
                               <h4 className="font-medium mb-2">Props</h4>
                               <div className="grid gap-2">
                                 {docs.props.map((prop: string) => (
-                                  <div key={prop} className="flex items-center justify-between p-2 border rounded">
+                                  <div
+                                    key={prop}
+                                    className="flex items-center justify-between p-2 border rounded"
+                                  >
                                     <code className="text-sm">{prop}</code>
                                     <Badge variant="outline">any</Badge>
                                   </div>
@@ -253,9 +323,17 @@ export default function DirectoryViewer({ generatedCode, components }: Directory
                             </div>
 
                             <div>
-                              <h4 className="font-medium mb-2">Usage Example</h4>
+                              <h4 className="font-medium mb-2">
+                                Usage Example
+                              </h4>
                               <pre className="bg-muted p-3 rounded text-sm">
-                                <code>{`import { ${docs.name.replace(/\s+/g, "")} } from "@/components/${fileName.replace(".tsx", "")}"
+                                <code>{`import { ${docs.name.replace(
+                                  /\s+/g,
+                                  ""
+                                )} } from "@/components/${fileName.replace(
+                                  ".tsx",
+                                  ""
+                                )}"
 
 export default function Example() {
   return (
@@ -275,7 +353,7 @@ export default function Example() {
                             <FileText className="h-8 w-8 mx-auto mb-2" />
                             <p>No documentation available for this component</p>
                           </div>
-                        )
+                        );
                       })()}
                     </TabsContent>
                   )}
@@ -283,7 +361,9 @@ export default function Example() {
               ) : (
                 <div className="text-center py-12 text-muted-foreground">
                   <File className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Select a file from the directory tree to view its content</p>
+                  <p>
+                    Select a file from the directory tree to view its content
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -291,5 +371,5 @@ export default function Example() {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -14,50 +20,63 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Eye, Edit, Trash2, Plus, Search, Filter } from "lucide-react"
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Eye, Edit, Trash2, Plus, Search, Filter } from "lucide-react";
 
 interface Component {
-  id: string
-  name: string
-  type: string
-  description: string
-  props: string[]
-  variants: string[]
+  id: string;
+  name: string;
+  type: string;
+  description: string;
+  props: string[];
+  variants: string[];
 }
 
 interface ComponentLibraryProps {
-  components: Component[]
-  onComponentsChange: (components: Component[]) => void
+  components: Component[];
+  onComponentsChange: (components: Component[]) => void;
 }
 
-export default function ComponentLibrary({ components, onComponentsChange }: ComponentLibraryProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterType, setFilterType] = useState("all")
-  const [selectedComponent, setSelectedComponent] = useState<Component | null>(null)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+export default function ComponentLibrary({
+  components,
+  onComponentsChange,
+}: ComponentLibraryProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [selectedComponent, setSelectedComponent] = useState<Component | null>(
+    null
+  );
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const filteredComponents = components.filter((component) => {
     const matchesSearch =
       component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      component.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filterType === "all" || component.type.toLowerCase() === filterType.toLowerCase()
-    return matchesSearch && matchesFilter
-  })
+      component.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter =
+      filterType === "all" ||
+      component.type.toLowerCase() === filterType.toLowerCase();
+    return matchesSearch && matchesFilter;
+  });
 
-  const componentTypes = [...new Set(components.map((c) => c.type))]
+  const componentTypes = [...new Set(components.map((c) => c.type))];
 
   const handleEditComponent = (component: Component) => {
-    setSelectedComponent(component)
-    setIsEditDialogOpen(true)
-  }
+    setSelectedComponent(component);
+    setIsEditDialogOpen(true);
+  };
 
   const handleDeleteComponent = (componentId: string) => {
-    const updatedComponents = components.filter((c) => c.id !== componentId)
-    onComponentsChange(updatedComponents)
-  }
+    const updatedComponents = components.filter((c) => c.id !== componentId);
+    onComponentsChange(updatedComponents);
+  };
 
   const generateComponentCode = (component: Component) => {
     return `import React from 'react'
@@ -78,8 +97,8 @@ export function ${component.name.replace(/\s+/g, "")}({
       {/* Component implementation */}
     </div>
   )
-}`
-  }
+}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -135,7 +154,10 @@ export function ${component.name.replace(/\s+/g, "")}({
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredComponents.map((component) => (
-            <Card key={component.id} className="group hover:shadow-md transition-shadow">
+            <Card
+              key={component.id}
+              className="group hover:shadow-md transition-shadow"
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div>
@@ -154,7 +176,9 @@ export function ${component.name.replace(/\s+/g, "")}({
                       <DialogContent className="max-w-4xl">
                         <DialogHeader>
                           <DialogTitle>{component.name}</DialogTitle>
-                          <DialogDescription>{component.description}</DialogDescription>
+                          <DialogDescription>
+                            {component.description}
+                          </DialogDescription>
                         </DialogHeader>
                         <Tabs defaultValue="preview" className="w-full">
                           <TabsList>
@@ -177,7 +201,9 @@ export function ${component.name.replace(/\s+/g, "")}({
                           <TabsContent value="props" className="mt-4">
                             <div className="space-y-4">
                               <div>
-                                <Label className="text-base font-medium">Props</Label>
+                                <Label className="text-base font-medium">
+                                  Props
+                                </Label>
                                 <div className="mt-2 space-y-2">
                                   {component.props.map((prop) => (
                                     <Badge key={prop} variant="outline">
@@ -187,7 +213,9 @@ export function ${component.name.replace(/\s+/g, "")}({
                                 </div>
                               </div>
                               <div>
-                                <Label className="text-base font-medium">Variants</Label>
+                                <Label className="text-base font-medium">
+                                  Variants
+                                </Label>
                                 <div className="mt-2 space-y-2">
                                   {component.variants.map((variant) => (
                                     <Badge key={variant} variant="secondary">
@@ -201,20 +229,32 @@ export function ${component.name.replace(/\s+/g, "")}({
                         </Tabs>
                       </DialogContent>
                     </Dialog>
-                    <Button variant="ghost" size="sm" onClick={() => handleEditComponent(component)}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditComponent(component)}
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleDeleteComponent(component.id)}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteComponent(component.id)}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <CardDescription className="mb-3">{component.description}</CardDescription>
+                <CardDescription className="mb-3">
+                  {component.description}
+                </CardDescription>
                 <div className="space-y-2">
                   <div>
-                    <Label className="text-xs font-medium text-muted-foreground">Props</Label>
+                    <Label className="text-xs font-medium text-muted-foreground">
+                      Props
+                    </Label>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {component.props.slice(0, 3).map((prop) => (
                         <Badge key={prop} variant="outline" className="text-xs">
@@ -229,10 +269,16 @@ export function ${component.name.replace(/\s+/g, "")}({
                     </div>
                   </div>
                   <div>
-                    <Label className="text-xs font-medium text-muted-foreground">Variants</Label>
+                    <Label className="text-xs font-medium text-muted-foreground">
+                      Variants
+                    </Label>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {component.variants.map((variant) => (
-                        <Badge key={variant} variant="secondary" className="text-xs">
+                        <Badge
+                          key={variant}
+                          variant="secondary"
+                          className="text-xs"
+                        >
                           {variant}
                         </Badge>
                       ))}
@@ -250,7 +296,9 @@ export function ${component.name.replace(/\s+/g, "")}({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Component</DialogTitle>
-            <DialogDescription>Modify component properties and configuration</DialogDescription>
+            <DialogDescription>
+              Modify component properties and configuration
+            </DialogDescription>
           </DialogHeader>
           {selectedComponent && (
             <div className="space-y-4">
@@ -260,7 +308,10 @@ export function ${component.name.replace(/\s+/g, "")}({
               </div>
               <div>
                 <Label htmlFor="description">Description</Label>
-                <Textarea id="description" defaultValue={selectedComponent.description} />
+                <Textarea
+                  id="description"
+                  defaultValue={selectedComponent.description}
+                />
               </div>
               <div>
                 <Label htmlFor="type">Type</Label>
@@ -278,15 +329,20 @@ export function ${component.name.replace(/\s+/g, "")}({
                 </Select>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
                   Cancel
                 </Button>
-                <Button onClick={() => setIsEditDialogOpen(false)}>Save Changes</Button>
+                <Button onClick={() => setIsEditDialogOpen(false)}>
+                  Save Changes
+                </Button>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

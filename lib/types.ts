@@ -1,9 +1,23 @@
-export enum Steps {
+export interface StepNavItem {
+  id: StepType;
+  title: string;
+  description: string;
+  component: string;
+}
+
+export enum StepType {
   UPLOAD = "upload",
   CONFIG = "config",
   GENERATE = "generate",
   PREVIEW = "preview",
   EXPORT = "export",
+}
+
+export enum StepStatus {
+  COMPLETED = "completed",
+  ACTIVE = "active",
+  AVAILABLE = "available",
+  LOCKED = "locked",
 }
 
 export enum Color {

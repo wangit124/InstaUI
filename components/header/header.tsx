@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Code2 } from "lucide-react";
-import ThemeSelector from "@/components/theme-selector";
+import ThemeSelector from "@/components/header/theme-selector";
 
 export default function Header() {
   return (
