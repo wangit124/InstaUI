@@ -9,20 +9,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Upload, X, FileImage, Link } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useGlobalFormStore } from "@/hooks/use-global-form-store";
 
-interface UploadSectionProps {
-  uploadedFiles: File[];
-  setUploadedFiles: (files: File[]) => void;
-  figmaLinks: string[];
-  setFigmaLinks: (links: string[]) => void;
-}
+export default function UploadSection() {
+  const { uploadedFiles, setUploadedFiles } = useGlobalFormStore();
 
-export default function UploadSection({
-  uploadedFiles,
-  setUploadedFiles,
-  figmaLinks,
-  setFigmaLinks,
-}: UploadSectionProps) {
+  const [figmaLinks, setFigmaLinks] = useState<string[]>([]);
   const [figmaUrl, setFigmaUrl] = useState("");
 
   const onDrop = useCallback(

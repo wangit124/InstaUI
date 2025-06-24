@@ -19,37 +19,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Code, Package, FileText } from "lucide-react";
+import { useGlobalFormStore } from "@/hooks/use-global-form-store";
+import { Configuration } from "@/lib/types";
+import { uiLibraries, stateLibraries, formLibraries } from "@/lib/constants";
 
-interface Configuration {
-  styling: {
-    componentSplitting: string;
-    eslintConfig: string;
-  };
-  libraries: {
-    ui: string[];
-    stateManagement: string[];
-    forms: string[];
-  };
-}
-
-interface ConfigSectionProps {
-  configuration: Configuration;
-  onConfigurationChange: (config: Configuration) => void;
-}
-
-export default function ConfigSection({
-  configuration,
-  onConfigurationChange,
-}: ConfigSectionProps) {
+export default function ConfigSection() {
+  const { configuration, setConfiguration } = useGlobalFormStore();
   const updateConfiguration = (section: string, key: string, value: any) => {
-    const newConfig = {
-      ...configuration,
-      [section]: {
-        ...configuration[section as keyof Configuration],
-        [key]: value,
-      },
-    };
-    onConfigurationChange(newConfig);
+    setConfiguration();
   };
 
   const toggleLibrary = (
@@ -63,67 +40,6 @@ export default function ConfigSection({
 
     updateConfiguration("libraries", category, newLibraries);
   };
-
-  const uiLibraries = [
-    {
-      id: "shadcn/ui",
-      name: "shadcn/ui",
-      description: "Beautifully designed components",
-    },
-    {
-      id: "tailwindcss",
-      name: "Tailwind CSS",
-      description: "Utility-first CSS framework",
-    },
-    {
-      id: "chakra-ui",
-      name: "Chakra UI",
-      description: "Modular and accessible component library",
-    },
-    {
-      id: "mantine",
-      name: "Mantine",
-      description: "Full-featured React components library",
-    },
-    {
-      id: "ant-design",
-      name: "Ant Design",
-      description: "Enterprise-class UI design language",
-    },
-  ];
-
-  const stateManagementLibraries = [
-    {
-      id: "zustand",
-      name: "Zustand",
-      description: "Small, fast and scalable state management",
-    },
-    {
-      id: "redux-toolkit",
-      name: "Redux Toolkit",
-      description: "Official, opinionated Redux toolset",
-    },
-    {
-      id: "jotai",
-      name: "Jotai",
-      description: "Primitive and flexible state management",
-    },
-    { id: "valtio", name: "Valtio", description: "Proxy-state made simple" },
-  ];
-
-  const formLibraries = [
-    {
-      id: "react-hook-form",
-      name: "React Hook Form",
-      description: "Performant, flexible forms",
-    },
-    { id: "formik", name: "Formik", description: "Build forms without tears" },
-    {
-      id: "react-final-form",
-      name: "React Final Form",
-      description: "High performance subscription-based form state management",
-    },
-  ];
 
   return (
     <div className="space-y-6">
@@ -271,19 +187,15 @@ export default function ConfigSection({
               </p>
             </div>
             <div className="grid gap-3">
-              {stateManagementLibraries.map((library) => (
+              {stateLibraries.map((library) => (
                 <div
                   key={library.id}
                   className="flex items-start space-x-3 p-3 border rounded-lg"
                 >
                   <Checkbox
                     id={library.id}
-                    checked={configuration.libraries.stateManagement.includes(
-                      library.id
-                    )}
-                    onCheckedChange={() =>
-                      toggleLibrary("stateManagement", library.id)
-                    }
+                    checked={configuration.libraries.state.includes(library.id)}
+                    onCheckedChange={() => toggleLibrary("state", library.id)}
                   />
                   <div className="flex-1">
                     <Label
@@ -301,7 +213,7 @@ export default function ConfigSection({
             </div>
             <div className="flex flex-wrap gap-2">
               <Label className="text-sm">Selected:</Label>
-              {configuration.libraries.stateManagement.map((lib) => (
+              {configuration.libraries.state.map((lib) => (
                 <Badge key={lib} variant="secondary">
                   {lib}
                 </Badge>
@@ -404,7 +316,7 @@ export default function ConfigSection({
                     State:
                   </Label>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {configuration.libraries.stateManagement.map((lib) => (
+                    {configuration.libraries.state.map((lib) => (
                       <Badge key={lib} variant="secondary" className="text-xs">
                         {lib}
                       </Badge>

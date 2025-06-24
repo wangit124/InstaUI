@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -18,8 +18,9 @@ import PreviewSection from "@/components/steps/preview-section";
 import ExportSection from "@/components/steps/export-section";
 import { StepType } from "@/lib/types";
 import { steps } from "@/lib/constants";
-import { useStepsStore } from "@/stores/use-steps-store";
+import { useStepsStore } from "@/hooks/use-steps-store";
 import { cn } from "@/lib/utils";
+import { useGlobalFormStore } from "@/hooks/use-global-form-store";
 
 export default function StepWrapper() {
   const { currentStep, setCurrentStep, completedSteps, addCompletedStep } =
@@ -30,21 +31,7 @@ export default function StepWrapper() {
     [currentStep]
   );
 
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [figmaLinks, setFigmaLinks] = useState<string[]>([]);
-  const [extractedComponents, setExtractedComponents] = useState<any[]>([]);
-  const [configuration, setConfiguration] = useState({
-    styling: {
-      componentSplitting: "moderate",
-      eslintConfig: "recommended",
-    },
-    libraries: {
-      ui: ["shadcn/ui", "tailwindcss"],
-      stateManagement: ["zustand"],
-      forms: ["react-hook-form"],
-    },
-  });
-  const [generatedCode, setGeneratedCode] = useState<any>(null);
+  const { uploadedFiles, generatedResponse } = useGlobalFormStore();
 
   const handleStepComplete = useCallback(
     (step: StepType) => {
@@ -71,11 +58,11 @@ export default function StepWrapper() {
   const canProceedToNext = () => {
     switch (currentStep) {
       case StepType.UPLOAD:
-        return uploadedFiles.length > 0 || figmaLinks.length > 0;
+        return uploadedFiles.length > 0;
       case StepType.CONFIG:
         return true;
       case StepType.GENERATE:
-        return generatedCode !== null;
+        return generatedResponse !== null;
       case StepType.PREVIEW:
         return true;
       default:
@@ -84,64 +71,21 @@ export default function StepWrapper() {
   };
 
   const stepContent = useMemo(() => {
-    switch (steps[currentStepIndex].component) {
+    switch (currentStep) {
       case StepType.UPLOAD:
-        return (
-          <UploadSection
-            uploadedFiles={uploadedFiles}
-            setUploadedFiles={setUploadedFiles}
-            figmaLinks={figmaLinks}
-            setFigmaLinks={setFigmaLinks}
-          />
-        );
+        return <UploadSection />;
       case StepType.CONFIG:
-        return (
-          <ConfigSection
-            configuration={configuration}
-            onConfigurationChange={setConfiguration}
-          />
-        );
+        return <ConfigSection />;
       case StepType.GENERATE:
-        return (
-          <GenerateSection
-            uploadedFiles={uploadedFiles}
-            figmaLinks={figmaLinks}
-            extractedComponents={extractedComponents}
-            setExtractedComponents={setExtractedComponents}
-            configuration={configuration}
-            onCodeGenerated={(code) => {
-              setGeneratedCode(code);
-              handleStepComplete(StepType.GENERATE);
-            }}
-          />
-        );
+        return <GenerateSection />;
       case StepType.PREVIEW:
-        return (
-          <PreviewSection
-            originalDesigns={uploadedFiles}
-            generatedCode={generatedCode}
-            components={extractedComponents}
-          />
-        );
+        return <PreviewSection />;
       case StepType.EXPORT:
-        return (
-          <ExportSection
-            generatedCode={generatedCode}
-            components={extractedComponents}
-          />
-        );
+        return <ExportSection />;
       default:
         return null;
     }
-  }, [
-    configuration,
-    currentStepIndex,
-    extractedComponents,
-    figmaLinks,
-    generatedCode,
-    handleStepComplete,
-    uploadedFiles,
-  ]);
+  }, [currentStep]);
 
   return (
     <div className="container py-6 pr-6">

@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Check, Circle, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useStepsStore } from "@/stores/use-steps-store";
+import { useStepsStore } from "@/hooks/use-steps-store";
 import { steps } from "@/lib/constants";
 import { StepStatus, StepType } from "@/lib/types";
 import { useMemo } from "react";

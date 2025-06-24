@@ -27,16 +27,12 @@ import {
   Settings,
   Package,
 } from "lucide-react";
+import { useGlobalFormStore } from "@/hooks/use-global-form-store";
 
-interface DirectoryViewerProps {
-  generatedCode: any;
-  components: any[];
-}
-
-export default function DirectoryViewer({
-  generatedCode,
-  components,
-}: DirectoryViewerProps) {
+export default function DirectoryViewer() {
+  const { generatedResponse } = useGlobalFormStore();
+  const generatedCode = generatedResponse?.full;
+  const components = generatedResponse?.sharedComponents;
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
     new Set(["app", "components"])
@@ -191,7 +187,7 @@ export default function DirectoryViewer({
 
   const getComponentDocumentation = (fileName: string) => {
     const componentName = fileName.replace(".tsx", "").replace(".ts", "");
-    const component = components.find(
+    const component = components?.find(
       (c) =>
         c.name.toLowerCase().replace(/\s+/g, "-") === componentName ||
         c.id === componentName

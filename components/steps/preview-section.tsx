@@ -26,18 +26,11 @@ import {
   Tablet,
   RefreshCw,
 } from "lucide-react";
+import { useGlobalFormStore } from "@/hooks/use-global-form-store";
 
-interface PreviewSectionProps {
-  originalDesigns: File[];
-  generatedCode: any;
-  components: any[];
-}
+export default function PreviewSection() {
+  const { uploadedFiles, generatedResponse } = useGlobalFormStore();
 
-export default function PreviewSection({
-  originalDesigns,
-  generatedCode,
-  components,
-}: PreviewSectionProps) {
   const [selectedComponent, setSelectedComponent] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">(
     "desktop"
@@ -271,9 +264,9 @@ export default function PreviewSection({
                   <CardDescription>Your uploaded design files</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {originalDesigns.length > 0 ? (
+                  {uploadedFiles.length > 0 ? (
                     <div className="space-y-4">
-                      {originalDesigns.slice(0, 3).map((file, index) => (
+                      {uploadedFiles.slice(0, 3).map((file, index) => (
                         <div
                           key={index}
                           className="border rounded-lg p-4 bg-muted/20"
@@ -312,7 +305,7 @@ export default function PreviewSection({
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {generatedCode ? (
+                  {generatedResponse ? (
                     <div className="space-y-4">
                       <div className="border rounded-lg p-4">
                         <div className="mb-4">
@@ -348,7 +341,7 @@ export default function PreviewSection({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Components</SelectItem>
-                  {components.map((component) => (
+                  {generatedResponse?.sharedComponents?.map((component) => (
                     <SelectItem key={component.id} value={component.id}>
                       {component.name}
                     </SelectItem>
@@ -359,7 +352,7 @@ export default function PreviewSection({
 
             <div className="grid gap-6">
               {selectedComponent === "all"
-                ? components.map((component) => (
+                ? generatedResponse?.sharedComponents?.map((component) => (
                     <Card key={component.id}>
                       <CardHeader>
                         <div className="flex items-center justify-between">
@@ -380,7 +373,7 @@ export default function PreviewSection({
                     </Card>
                   ))
                 : (() => {
-                    const component = components.find(
+                    const component = generatedResponse?.sharedComponents?.find(
                       (c) => c.id === selectedComponent
                     );
                     return component ? (
@@ -421,7 +414,7 @@ export default function PreviewSection({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {generatedCode ? (
+                {generatedResponse?.full ? (
                   <div className="border rounded-lg overflow-hidden">
                     {renderFullAppPreview()}
                   </div>

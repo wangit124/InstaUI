@@ -34,3 +34,16 @@ export type ColorTheme = {
   label: string;
   color: string;
 };
+
+export interface Configuration {
+  baseFramework: "nextjs" | "reactjs" | "raw";
+  libraries: {
+    ui: string[];
+    state: string[];
+    forms: string[];
+  };
+  styling: {
+    componentSplitting: "minimal" | "moderate" | "aggressive";
+    eslintConfig: string;
+  };
+}

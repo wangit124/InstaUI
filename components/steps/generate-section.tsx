@@ -45,26 +45,11 @@ import {
   Search,
   Filter,
   Upload,
-  Link,
 } from "lucide-react";
+import { useGlobalFormStore } from "@/hooks/use-global-form-store";
 
-interface GenerateSectionProps {
-  uploadedFiles: File[];
-  figmaLinks: string[];
-  extractedComponents: any[];
-  setExtractedComponents: (components: any[]) => void;
-  configuration: any;
-  onCodeGenerated: (code: any) => void;
-}
-
-export default function GenerateSection({
-  uploadedFiles,
-  figmaLinks,
-  extractedComponents,
-  setExtractedComponents,
-  configuration,
-  onCodeGenerated,
-}: GenerateSectionProps) {
+export default function GenerateSection() {
+  const { uploadedFiles } = useGlobalFormStore();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [generationStep, setGenerationStep] = useState("");
@@ -76,6 +61,7 @@ export default function GenerateSection({
   const [filterType, setFilterType] = useState("all");
   const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [extractedComponents, setExtractedComponents] = useState<any[]>([]);
 
   const extractComponents = async () => {
     setIsExtracting(true);
@@ -254,7 +240,6 @@ export function NavigationHeader({ logo, menuItems, user }: NavigationHeaderProp
     };
 
     setGeneratedFiles(mockGeneratedCode.files);
-    onCodeGenerated(mockGeneratedCode);
     setGenerationComplete(true);
     setIsGenerating(false);
   };
@@ -359,26 +344,6 @@ export function ${component.name.replace(/\s+/g, "")}({
                   )}
                 </div>
               </div>
-              <div>
-                <h4 className="font-medium mb-2">Figma Links</h4>
-                <div className="space-y-1">
-                  {figmaLinks.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      No Figma links added
-                    </p>
-                  ) : (
-                    figmaLinks.map((link, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-2 text-sm"
-                      >
-                        <Link className="h-3 w-3" />
-                        <span className="truncate">{link}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t">
@@ -390,10 +355,7 @@ export function ${component.name.replace(/\s+/g, "")}({
               </div>
               <Button
                 onClick={extractComponents}
-                disabled={
-                  (uploadedFiles.length === 0 && figmaLinks.length === 0) ||
-                  isExtracting
-                }
+                disabled={uploadedFiles.length === 0 || isExtracting}
                 size="lg"
               >
                 {isExtracting ? (
@@ -741,17 +703,15 @@ export function ${component.name.replace(/\s+/g, "")}({
       )}
 
       {/* Validation Warnings */}
-      {extractedComponents.length === 0 &&
-        uploadedFiles.length === 0 &&
-        figmaLinks.length === 0 && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              No designs have been uploaded yet. Please go back to the Upload
-              step to add design files or Figma links.
-            </AlertDescription>
-          </Alert>
-        )}
+      {extractedComponents.length === 0 && uploadedFiles.length === 0 && (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            No designs have been uploaded yet. Please go back to the Upload step
+            to add design files or Figma links.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Edit Component Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
