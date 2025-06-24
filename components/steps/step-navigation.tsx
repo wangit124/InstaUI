@@ -43,7 +43,7 @@ export default function StepNavigation() {
   const getStepClasses = (step: StepType) => {
     const status = getStepStatus(step);
     const baseClasses =
-      "flex items-center gap-3 p-3 rounded-lg transition-all duration-200";
+      "flex items-center w-full gap-3 p-3 rounded-lg transition-all duration-200";
     switch (status) {
       case StepStatus.COMPLETED:
         return cn(
@@ -66,7 +66,7 @@ export default function StepNavigation() {
       case StepStatus.LOCKED:
         return cn(
           baseClasses,
-          "bg-muted/20 text-muted-foreground/50 cursor-not-allowed",
+          "bg-muted/20 text-muted-foreground/50 cursor-not-allowed border border-primary/20",
           "dark:bg-muted/10 dark:text-muted-foreground/40"
         );
       default:
@@ -74,101 +74,40 @@ export default function StepNavigation() {
     }
   };
 
-  const getConnectorClasses = (step: StepType) => {
-    const isCompleted =
-      completedSteps?.has(step) ||
-      steps.findIndex((s) => s.id === step) < currentStepIndex;
-    return cn(
-      "h-0.5 flex-1 transition-colors duration-300",
-      isCompleted
-        ? "bg-green-300 dark:bg-green-600"
-        : "bg-muted dark:bg-muted/50"
-    );
-  };
-
-  const canClickStep = (step: StepType) => {
-    return (
-      steps.findIndex((s) => s.id === step) < currentStepIndex ||
-      completedSteps?.has(step)
-    );
-  };
+  const canClickStep = (step: StepType) =>
+    steps.findIndex((s) => s.id === step) < currentStepIndex ||
+    completedSteps?.has(step);
 
   return (
-    <div className="border-b bg-background/50">
-      <div className="container py-4">
-        <div className="w-full">
-          {/* Desktop Stepper */}
-          <div className="hidden md:flex items-center justify-between">
-            {steps.map((stepNavItem, index) => (
-              <div key={stepNavItem.id} className="flex items-center flex-1">
-                <div
-                  className={getStepClasses(stepNavItem.id)}
-                  onClick={() =>
-                    canClickStep(stepNavItem.id) &&
-                    setCurrentStep(stepNavItem.id)
-                  }
-                >
-                  <div className="flex-shrink-0">
-                    {getStepIcon(stepNavItem.id)}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-medium text-sm truncate">
-                      {stepNavItem.title}
-                    </div>
-                    <div className="text-xs opacity-75 truncate">
-                      {stepNavItem.description}
-                    </div>
-                  </div>
-                  {getStepStatus(stepNavItem.id) === StepStatus.ACTIVE && (
-                    <Badge variant="secondary" className="ml-2 text-xs">
-                      Active
-                    </Badge>
-                  )}
-                </div>
-                {index < steps.length - 1 && (
-                  <div
-                    className={cn("mx-2", getConnectorClasses(stepNavItem.id))}
-                  />
-                )}
+    <div className="flex flex-col p-6 gap-2">
+      {steps.map((stepNavItem) => (
+        <div
+          key={stepNavItem.id}
+          className="flex flex-col items-center w-full gap-2"
+        >
+          <div
+            className={getStepClasses(stepNavItem.id)}
+            onClick={() =>
+              canClickStep(stepNavItem.id) && setCurrentStep(stepNavItem.id)
+            }
+          >
+            <div className="flex-shrink-0">{getStepIcon(stepNavItem.id)}</div>
+            <div className="min-w-0">
+              <div className="font-medium text-sm truncate">
+                {stepNavItem.title}
               </div>
-            ))}
-          </div>
-
-          {/* Mobile Stepper */}
-          <div className="md:hidden">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-sm font-medium">
-                Step {currentStep + 1} of {steps.length}
-              </div>
-              <div className="flex items-center gap-1">
-                {steps.map((_, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "h-2 w-8 rounded-full transition-colors",
-                      index <= currentStepIndex
-                        ? "bg-primary"
-                        : "bg-muted dark:bg-muted/50"
-                    )}
-                  />
-                ))}
+              <div className="text-xs opacity-75 truncate">
+                {stepNavItem.description}
               </div>
             </div>
-
-            <div className={getStepClasses(currentStep)}>
-              <div className="flex-shrink-0">{getStepIcon(currentStep)}</div>
-              <div>
-                <div className="font-medium">
-                  {steps[currentStepIndex].title}
-                </div>
-                <div className="text-sm opacity-75">
-                  {steps[currentStepIndex].description}
-                </div>
-              </div>
-            </div>
+            {getStepStatus(stepNavItem.id) === StepStatus.ACTIVE && (
+              <Badge variant="secondary" className="ml-2 text-xs">
+                Active
+              </Badge>
+            )}
           </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }

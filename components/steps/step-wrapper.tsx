@@ -11,14 +11,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import UploadSection from "@/components/steps/upload/upload-section";
-import ConfigSection from "@/components/steps/config/config-section";
-import GenerateSection from "@/components/steps/generate/generate-section";
-import PreviewSection from "@/components/steps/preview/preview-section";
-import ExportSection from "@/components/steps/export/export-section";
+import UploadSection from "@/components/steps/upload-section";
+import ConfigSection from "@/components/steps/config-section";
+import GenerateSection from "@/components/steps/generate-section";
+import PreviewSection from "@/components/steps/preview-section";
+import ExportSection from "@/components/steps/export-section";
 import { StepType } from "@/lib/types";
 import { steps } from "@/lib/constants";
 import { useStepsStore } from "@/stores/use-steps-store";
+import { cn } from "@/lib/utils";
 
 export default function StepWrapper() {
   const { currentStep, setCurrentStep, completedSteps, addCompletedStep } =
@@ -143,7 +144,7 @@ export default function StepWrapper() {
   ]);
 
   return (
-    <div className="container py-6">
+    <div className="container py-6 pr-6">
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -151,7 +152,7 @@ export default function StepWrapper() {
               <CardTitle className="flex items-center gap-2">
                 {steps[currentStepIndex].title}
                 <Badge variant="outline">
-                  Step {currentStep + 1} of {steps.length}
+                  Step {currentStepIndex + 1} of {steps.length}
                 </Badge>
               </CardTitle>
               <CardDescription>
@@ -172,8 +173,23 @@ export default function StepWrapper() {
               Previous
             </Button>
 
-            <div className="text-sm text-muted-foreground">
-              {currentStep + 1} of {steps.length} steps
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-sm font-medium">
+                Step {currentStepIndex + 1} of {steps.length}
+              </div>
+              <div className="flex items-center gap-1">
+                {steps.map((_, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "h-2 w-8 rounded-full transition-colors",
+                      index <= currentStepIndex
+                        ? "bg-primary"
+                        : "bg-muted dark:bg-muted/50"
+                    )}
+                  />
+                ))}
+              </div>
             </div>
 
             <Button

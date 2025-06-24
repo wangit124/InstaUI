@@ -8,10 +8,12 @@ import StepWrapper from "@/components/steps/step-wrapper";
 export default function Root() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-background">
+      <div id="theme-root" className="bg-background">
         <Header />
-        <StepNavigation />
-        <StepWrapper />
+        <div className="flex">
+          <StepNavigation />
+          <StepWrapper />
+        </div>
       </div>
     </ThemeProvider>
   );

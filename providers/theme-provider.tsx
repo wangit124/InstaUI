@@ -49,10 +49,10 @@ export default function ThemeProvider({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const root = window.document.documentElement;
+      const root = window.document.getElementById("theme-root");
 
       // Remove all color theme classes
-      root.classList.remove(
+      root?.classList.remove(
         "theme-black",
         "theme-blue",
         "theme-green",
@@ -62,7 +62,7 @@ export default function ThemeProvider({
       );
 
       // Add current color theme class
-      root.classList.add(`theme-${colorTheme}`);
+      root?.classList.add(`theme-${colorTheme}`);
     }
   }, [colorTheme]);
 
@@ -78,13 +78,7 @@ export default function ThemeProvider({
 
   return (
     <ColorThemeProviderContext.Provider value={value}>
-      <NextThemesProvider
-        attribute="class"
-        defaultTheme="light"
-        enableSystem
-        disableTransitionOnChange
-        {...props}
-      >
+      <NextThemesProvider attribute="class" defaultTheme="dark" {...props}>
         {children}
       </NextThemesProvider>
     </ColorThemeProviderContext.Provider>

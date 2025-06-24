@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Palette, Check, Sun, Moon } from "lucide-react";
-import { useColorTheme } from "../../providers/theme-provider";
+import { useColorTheme } from "@/providers/theme-provider";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Color, ColorTheme } from "@/lib/types";
