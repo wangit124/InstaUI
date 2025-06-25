@@ -1,4 +1,4 @@
-import { Configuration } from "@/lib/types";
+import { Configuration, GeneratedResponse } from "@/lib/types";
 import { create } from "zustand";
 
 type GlobalFormStoreType = {
@@ -8,11 +8,8 @@ type GlobalFormStoreType = {
   setFigmaImages: (images: string[]) => void;
   configuration: Configuration;
   setConfiguration: (configuration: Configuration) => void;
-  generatedResponse: {
-    full: any;
-    sharedComponents: any[];
-  } | null;
-  setGeneratedResponse: () => void;
+  generatedResponse: GeneratedResponse | null;
+  setGeneratedResponse: (response: GeneratedResponse) => void;
 };
 
 export const useGlobalFormStore = create<GlobalFormStoreType>((set) => ({
@@ -22,17 +19,17 @@ export const useGlobalFormStore = create<GlobalFormStoreType>((set) => ({
   setFigmaImages: (images) => set({ figmaImages: Array.from(new Set(images)) }),
   configuration: {
     baseFramework: "nextjs",
+    enableTailwind: true,
     libraries: {
-      ui: [],
-      state: [],
-      forms: [],
+      ui: "shadcn",
+      state: ["zustand"],
+      forms: ["react-hook-form"],
     },
     styling: {
       componentSplitting: "moderate",
-      eslintConfig: "recommended",
     },
   },
   setConfiguration: (configuration) => set({ configuration }),
   generatedResponse: null,
-  setGeneratedResponse: () => {},
+  setGeneratedResponse: (response) => set({ generatedResponse: response }),
 }));

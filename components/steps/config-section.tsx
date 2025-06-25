@@ -18,31 +18,89 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Code, Package, FileText } from "lucide-react";
+import { Code, Package } from "lucide-react";
 import { useGlobalFormStore } from "@/hooks/use-global-form-store";
 import { Configuration } from "@/lib/types";
-import { uiLibraries, stateLibraries, formLibraries } from "@/lib/constants";
+import {
+  uiLibraries,
+  stateLibraries,
+  formLibraries,
+  baseFrameworks,
+  componentSplittingLevels,
+} from "@/lib/constants";
+import { Switch } from "@/components/ui/switch";
 
 export default function ConfigSection() {
   const { configuration, setConfiguration } = useGlobalFormStore();
-  const updateConfiguration = (section: string, key: string, value: any) => {
-    setConfiguration();
-  };
 
   const toggleLibrary = (
-    category: keyof Configuration["libraries"],
+    category: Exclude<keyof Configuration["libraries"], "ui">,
     library: string
   ) => {
     const currentLibraries = configuration.libraries[category];
     const newLibraries = currentLibraries.includes(library)
       ? currentLibraries.filter((lib) => lib !== library)
       : [...currentLibraries, library];
-
-    updateConfiguration("libraries", category, newLibraries);
+    setConfiguration({
+      ...configuration,
+      libraries: { ...configuration.libraries, [category]: newLibraries },
+    });
   };
 
   return (
     <div className="space-y-6">
+      {/* Base Framework */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Code className="h-5 w-5" />
+            Base Framework
+          </CardTitle>
+          <CardDescription>
+            Configure which base framework to use for your project
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6 gap-2">
+          <div className="space-y-2">
+            <Label htmlFor="base-framework">Framework</Label>
+            <Select
+              value={configuration.baseFramework}
+              onValueChange={(value) =>
+                setConfiguration({
+                  ...configuration,
+                  baseFramework: value as Configuration["baseFramework"],
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select base framework" />
+              </SelectTrigger>
+              <SelectContent>
+                {baseFrameworks.map((f) => (
+                  <SelectItem key={f.id} defaultChecked value={f.id}>
+                    {f.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="flex align-center pt-2 gap-2">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="tailwind">Enable Tailwind CSS</Label>
+              </div>
+              <Switch
+                style={{ margin: 0 }}
+                checked={configuration.enableTailwind}
+                onCheckedChange={(value) =>
+                  setConfiguration({
+                    ...configuration,
+                    enableTailwind: value,
+                  })
+                }
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       {/* Code Styling & Refactoring */}
       <Card>
         <CardHeader>
@@ -61,58 +119,30 @@ export default function ConfigSection() {
               <Select
                 value={configuration.styling.componentSplitting}
                 onValueChange={(value) =>
-                  updateConfiguration("styling", "componentSplitting", value)
+                  setConfiguration({
+                    ...configuration,
+                    styling: {
+                      ...configuration.styling,
+                      componentSplitting:
+                        value as Configuration["styling"]["componentSplitting"],
+                    },
+                  })
                 }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select splitting level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="minimal">
-                    Minimal - Keep components large
-                  </SelectItem>
-                  <SelectItem value="moderate">
-                    Moderate - Balance size and reusability
-                  </SelectItem>
-                  <SelectItem value="aggressive">
-                    Aggressive - Split into smallest components
-                  </SelectItem>
+                  {componentSplittingLevels.map((f) => (
+                    <SelectItem key={f.id} defaultChecked value={f.id}>
+                      {f.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
                 Controls how deeply nested components are split into separate
                 files
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="eslint-config">ESLint Configuration</Label>
-              <Select
-                value={configuration.styling.eslintConfig}
-                onValueChange={(value) =>
-                  updateConfiguration("styling", "eslintConfig", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select ESLint config" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="recommended">
-                    Recommended - Standard rules
-                  </SelectItem>
-                  <SelectItem value="strict">
-                    Strict - Enforce best practices
-                  </SelectItem>
-                  <SelectItem value="airbnb">
-                    Airbnb - Popular style guide
-                  </SelectItem>
-                  <SelectItem value="custom">
-                    Custom - Import your config
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">
-                Choose the ESLint configuration for code quality
               </p>
             </div>
           </div>
@@ -138,41 +168,33 @@ export default function ConfigSection() {
                 Design & UI Libraries
               </Label>
               <p className="text-sm text-muted-foreground">
-                Select UI component libraries and styling frameworks
+                Select UI component library
               </p>
             </div>
-            <div className="grid gap-3">
-              {uiLibraries.map((library) => (
-                <div
-                  key={library.id}
-                  className="flex items-start space-x-3 p-3 border rounded-lg"
-                >
-                  <Checkbox
-                    id={library.id}
-                    checked={configuration.libraries.ui.includes(library.id)}
-                    onCheckedChange={() => toggleLibrary("ui", library.id)}
-                  />
-                  <div className="flex-1">
-                    <Label
-                      htmlFor={library.id}
-                      className="font-medium cursor-pointer"
-                    >
-                      {library.name}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {library.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Label className="text-sm">Selected:</Label>
-              {configuration.libraries.ui.map((lib) => (
-                <Badge key={lib} variant="secondary">
-                  {lib}
-                </Badge>
-              ))}
+            <div className="space-y-2">
+              <Select
+                value={configuration.libraries.ui}
+                onValueChange={(value) =>
+                  setConfiguration({
+                    ...configuration,
+                    libraries: {
+                      ...configuration.libraries,
+                      ui: value as Configuration["libraries"]["ui"],
+                    },
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select splitting level" />
+                </SelectTrigger>
+                <SelectContent>
+                  {uiLibraries.map((l) => (
+                    <SelectItem key={l.id} defaultChecked value={l.id}>
+                      {l.name} - {l.description}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -263,79 +285,6 @@ export default function ConfigSection() {
                   {lib}
                 </Badge>
               ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Configuration Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Configuration Summary
-          </CardTitle>
-          <CardDescription>
-            Review your current configuration settings
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label className="font-medium">Code Style</Label>
-              <div className="mt-1 space-y-1">
-                <p className="text-sm">
-                  Component Splitting:{" "}
-                  <Badge variant="outline">
-                    {configuration.styling.componentSplitting}
-                  </Badge>
-                </p>
-                <p className="text-sm">
-                  ESLint Config:{" "}
-                  <Badge variant="outline">
-                    {configuration.styling.eslintConfig}
-                  </Badge>
-                </p>
-              </div>
-            </div>
-            <div>
-              <Label className="font-medium">Selected Libraries</Label>
-              <div className="mt-2 space-y-2">
-                <div>
-                  <Label className="text-sm text-muted-foreground">UI:</Label>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {configuration.libraries.ui.map((lib) => (
-                      <Badge key={lib} variant="secondary" className="text-xs">
-                        {lib}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-sm text-muted-foreground">
-                    State:
-                  </Label>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {configuration.libraries.state.map((lib) => (
-                      <Badge key={lib} variant="secondary" className="text-xs">
-                        {lib}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-sm text-muted-foreground">
-                    Forms:
-                  </Label>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {configuration.libraries.forms.map((lib) => (
-                      <Badge key={lib} variant="secondary" className="text-xs">
-                        {lib}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </CardContent>

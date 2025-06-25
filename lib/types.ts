@@ -36,14 +36,28 @@ export type ColorTheme = {
 };
 
 export interface Configuration {
-  baseFramework: "nextjs" | "reactjs" | "raw";
+  baseFramework: "nextjs" | "reactjs" | "angular" | "jquery";
+  enableTailwind: boolean;
+  styling: {
+    componentSplitting: "minimal" | "moderate" | "aggressive";
+  };
   libraries: {
-    ui: string[];
+    ui: string;
     state: string[];
     forms: string[];
   };
-  styling: {
-    componentSplitting: "minimal" | "moderate" | "aggressive";
-    eslintConfig: string;
+}
+
+export interface GeneratedFile {
+  id: string;
+  fileName: string;
+  code: string;
+}
+
+export interface GeneratedResponse {
+  full?: {
+    files: GeneratedFile[];
+    structure: Record<string, string[]>;
   };
+  sharedComponents?: GeneratedFile[];
 }
