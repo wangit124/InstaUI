@@ -1,21 +1,25 @@
 "use client";
 
+import { toast } from "sonner";
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Upload, X, FileImage, Link } from "lucide-react";
+import Image from "next/image";
+import { Upload, X, Link } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useGlobalFormStore } from "@/hooks/use-global-form-store";
+import { useConvertFigmaFile } from "@/hooks/use-convert-figma-file";
 
 export default function UploadSection() {
-  const { uploadedFiles, setUploadedFiles } = useGlobalFormStore();
+  const { uploadedFiles, setUploadedFiles, figmaImages, setFigmaImages } =
+    useGlobalFormStore();
 
-  const [figmaLinks, setFigmaLinks] = useState<string[]>([]);
   const [figmaUrl, setFigmaUrl] = useState("");
+
+  const { mutate: convertFigmaFile, isPending } = useConvertFigmaFile();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -27,7 +31,7 @@ export default function UploadSection() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".gif", ".svg"],
+      "image/*": [".png", ".jpg", ".jpeg", ".svg"],
       "application/pdf": [".pdf"],
     },
     multiple: true,
@@ -38,21 +42,27 @@ export default function UploadSection() {
     setUploadedFiles(newFiles);
   };
 
-  const addFigmaLink = () => {
-    if (figmaUrl && !figmaLinks.includes(figmaUrl)) {
-      setFigmaLinks([...figmaLinks, figmaUrl]);
-      setFigmaUrl("");
-    }
+  const addFigmaImage = () => {
+    convertFigmaFile(
+      { figmaUrl },
+      {
+        onSuccess: (data) => {
+          setFigmaImages([...figmaImages, ...(data?.images || [])]);
+          setFigmaUrl("");
+        },
+        onError: () => {
+          toast.error("Failed to convert figma image, please try again.");
+        },
+      }
+    );
   };
 
-  const removeFigmaLink = (index: number) => {
-    const newLinks = figmaLinks.filter((_, i) => i !== index);
-    setFigmaLinks(newLinks);
+  const removeFigmaImage = (image: string) => {
+    setFigmaImages(figmaImages.filter((img) => img !== image));
   };
 
   return (
     <div className="space-y-6">
-      {/* File Upload */}
       <div className="space-y-4">
         <div>
           <Label className="text-base font-medium">Upload Design Files</Label>
@@ -84,49 +94,15 @@ export default function UploadSection() {
             </div>
           )}
         </div>
-
-        {/* Uploaded Files */}
-        {uploadedFiles.length > 0 && (
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">
-              Uploaded Files ({uploadedFiles.length})
-            </Label>
-            <div className="grid gap-2">
-              {uploadedFiles.map((file, index) => (
-                <Card key={index}>
-                  <CardContent className="flex items-center justify-between p-3">
-                    <div className="flex items-center gap-3">
-                      <FileImage className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm font-medium">{file.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {(file.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFile(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       <Separator />
 
-      {/* Figma Links */}
       <div className="space-y-4">
         <div>
           <Label className="text-base font-medium">Figma Links</Label>
           <p className="text-sm text-muted-foreground">
-            Add Figma file or frame URLs to extract components
+            Add Figma node urls to extract components
           </p>
         </div>
 
@@ -135,48 +111,77 @@ export default function UploadSection() {
             placeholder="https://www.figma.com/file/..."
             value={figmaUrl}
             onChange={(e) => setFigmaUrl(e.target.value)}
+            disabled={isPending}
             className="flex-1"
           />
-          <Button onClick={addFigmaLink} disabled={!figmaUrl}>
+          <Button
+            onClick={addFigmaImage}
+            disabled={!figmaUrl || isPending}
+            loading={isPending}
+          >
             <Link className="h-4 w-4 mr-2" />
             Add Link
           </Button>
         </div>
+      </div>
 
-        {/* Figma Links List */}
-        {figmaLinks.length > 0 && (
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">
-              Added Links ({figmaLinks.length})
-            </Label>
-            <div className="grid gap-2">
-              {figmaLinks.map((link, index) => (
-                <Card key={index}>
-                  <CardContent className="flex items-center justify-between p-3">
-                    <div className="flex items-center gap-3">
-                      <Link className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm font-medium truncate max-w-md">
-                          {link}
-                        </p>
-                        <Badge variant="secondary" className="text-xs">
-                          Figma
-                        </Badge>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFigmaLink(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
+      <div className="space-y-2">
+        <Label className="text-sm font-medium">
+          Uploaded Files ({uploadedFiles.length + figmaImages.length})
+        </Label>
+        <div className="grid gap-2">
+          {uploadedFiles.map((file, index) => (
+            <Card key={index}>
+              <CardContent className="flex justify-between p-3">
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={URL.createObjectURL(file)}
+                    alt={file.name}
+                    width={0}
+                    height={0}
+                    style={{ width: 150, height: "auto" }}
+                  />
+                  <div>
+                    <p className="text-sm font-medium">{file.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeFile(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+          {figmaImages.map((image, index) => (
+            <Card key={index}>
+              <CardContent className="flex justify-between p-3">
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={image}
+                    alt={image}
+                    width={0}
+                    height={0}
+                    style={{ width: 150, height: "auto" }}
+                  />
+                  <p className="text-sm font-medium">{image}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeFigmaImage(image)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );

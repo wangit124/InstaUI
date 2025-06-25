@@ -31,7 +31,7 @@ export default function StepWrapper() {
     [currentStep]
   );
 
-  const { uploadedFiles, generatedResponse } = useGlobalFormStore();
+  const { uploadedFiles, figmaImages } = useGlobalFormStore();
 
   const handleStepComplete = useCallback(
     (step: StepType) => {
@@ -58,11 +58,11 @@ export default function StepWrapper() {
   const canProceedToNext = () => {
     switch (currentStep) {
       case StepType.UPLOAD:
-        return uploadedFiles.length > 0;
+        return uploadedFiles.length > 0 || figmaImages.length > 0;
       case StepType.CONFIG:
         return true;
       case StepType.GENERATE:
-        return generatedResponse !== null;
+        return true;
       case StepType.PREVIEW:
         return true;
       default:

@@ -4,8 +4,10 @@ import { create } from "zustand";
 type GlobalFormStoreType = {
   uploadedFiles: File[];
   setUploadedFiles: (files: File[]) => void;
+  figmaImages: string[];
+  setFigmaImages: (images: string[]) => void;
   configuration: Configuration;
-  setConfiguration: () => void;
+  setConfiguration: (configuration: Configuration) => void;
   generatedResponse: {
     full: any;
     sharedComponents: any[];
@@ -13,9 +15,11 @@ type GlobalFormStoreType = {
   setGeneratedResponse: () => void;
 };
 
-export const useGlobalFormStore = create<GlobalFormStoreType>(() => ({
+export const useGlobalFormStore = create<GlobalFormStoreType>((set) => ({
   uploadedFiles: [],
-  setUploadedFiles: () => {},
+  setUploadedFiles: (files) => set({ uploadedFiles: files }),
+  figmaImages: [],
+  setFigmaImages: (images) => set({ figmaImages: Array.from(new Set(images)) }),
   configuration: {
     baseFramework: "nextjs",
     libraries: {
@@ -28,7 +32,7 @@ export const useGlobalFormStore = create<GlobalFormStoreType>(() => ({
       eslintConfig: "recommended",
     },
   },
-  setConfiguration: () => {},
+  setConfiguration: (configuration) => set({ configuration }),
   generatedResponse: null,
   setGeneratedResponse: () => {},
 }));
