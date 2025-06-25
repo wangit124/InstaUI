@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
+import JSZip from "jszip";
 import {
   Card,
   CardContent,
@@ -31,7 +32,8 @@ export default function StepWrapper() {
     [currentStep]
   );
 
-  const { uploadedFiles, figmaImages } = useGlobalFormStore();
+  const { uploadedFiles, figmaImages, generatedResponse } =
+    useGlobalFormStore();
 
   const handleStepComplete = useCallback(
     (step: StepType) => {
@@ -42,7 +44,49 @@ export default function StepWrapper() {
     [addCompletedStep, completedSteps]
   );
 
+  const exportFiles = async () => {
+    const files = generatedResponse?.full?.files;
+
+    if (!files || files.length === 0) {
+      alert("No files to export. Please generate your application first.");
+      return;
+    }
+
+    try {
+      // Create new JSZip instance
+      const zip = new JSZip();
+
+      // Add each file to the zip with proper directory structure
+      files.forEach((file) => {
+        // JSZip automatically creates directories when using paths like "src/components/Button.tsx"
+        zip.file(file.fileName, file.code);
+      });
+
+      // Generate the zip file
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+
+      // Create download link for the zip file
+      const url = URL.createObjectURL(zipBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "new-project.zip";
+
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error creating zip file:", error);
+      alert("Error creating zip file. Please try again.");
+    }
+  };
+
   const handleNextStep = () => {
+    if (currentStepIndex === steps.length - 1) {
+      exportFiles();
+      return;
+    }
     if (currentStepIndex < steps.length - 1) {
       handleStepComplete(currentStep);
       setCurrentStep(steps[currentStepIndex + 1].id);
@@ -136,14 +180,11 @@ export default function StepWrapper() {
               </div>
             </div>
 
-            <Button
-              onClick={handleNextStep}
-              disabled={
-                currentStepIndex === steps.length - 1 || !canProceedToNext()
-              }
-            >
-              Next
-              <ArrowRight className="h-4 w-4 ml-2" />
+            <Button onClick={handleNextStep} disabled={!canProceedToNext()}>
+              {currentStepIndex === steps.length - 1 ? "Export" : "Next"}
+              {currentStepIndex !== steps.length - 1 && (
+                <ArrowRight className="h-4 w-4 ml-2" />
+              )}
             </Button>
           </div>
         </CardContent>
